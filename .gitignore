@@ -8,9 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/
@@ -28,7 +26,6 @@ share/python-wheels/
 MANIFEST
 
 # PyInstaller
-*.spec
 
 # Installer logs
 pip-log.txt
@@ -98,6 +95,15 @@ ipython_config.py
 # pdm.lock
 pdm.py
 
+
+# Environments
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
 # PEP 582; used by e.g. pdm
 __pypackages__/
 
@@ -108,14 +114,6 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
 # Spyder project settings
 .spyderproject
@@ -146,5 +144,5 @@ cython_debug/
 
 # Custom
 chroma_db/
-documents/
+
 exe/
