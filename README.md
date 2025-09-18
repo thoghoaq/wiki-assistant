@@ -7,7 +7,6 @@ A personal assistant application built with Streamlit that allows you to chat wi
 - **Document Upload**: Upload your PDF documents to create a personal knowledge base.
 - **Conversational AI**: Chat with an AI assistant that can answer questions based on the content of your uploaded documents.
 - **Persistent Memory**: The assistant remembers previous conversations.
-- **Standalone Executable**: The project can be compiled into a single `.exe` file for Windows, making it easy to share and run without a Python environment.
 
 ## Tech Stack
 
