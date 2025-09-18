@@ -29,8 +29,8 @@ A personal assistant application built with Streamlit that allows you to chat wi
     # Create the environment
     python -m venv venv
 
-    # Activate on Windows (PowerShell)
-    .\venv\Scripts\Activate.ps1
+    # Activate on Windows
+    .\venv\Scripts\Activate
     ```
 
 3.  **Install dependencies:**
