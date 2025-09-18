@@ -32,7 +32,8 @@ with st.sidebar:
         "Gemini API Key", 
         type="password", 
         key="gemini_api_input",
-        value=os.getenv("GOOGLE_API_KEY", "")
+        value=os.getenv("GOOGLE_API_KEY", ""),
+        help="Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)."
     )
 
     if gemini_api_key and gemini_api_key != os.getenv("GOOGLE_API_KEY"):
@@ -44,6 +45,40 @@ with st.sidebar:
             set_key(ENV_PATH, "GOOGLE_API_KEY", gemini_api_key)
         os.environ["GOOGLE_API_KEY"] = gemini_api_key
         st.success("API Key saved for future sessions.")
+    
+    st.header("LLM & Search")
+    
+    # Add model selection
+    model_name = st.selectbox(
+        "Select Gemini Model:",
+        options=["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"],
+        index=0,
+        key="model_name_selector",
+        help="Select the Gemini model to use for generating answers."
+    )
+
+    # Add search type selection
+    search_type = st.selectbox(
+        "Select Search Type:",
+        options=["mmr", "similarity"],
+        index=0,
+        key="search_type_selector",
+        help=(
+            "**Similarity:** Finds the most similar document chunks to the query. \n\n"
+            "**MMR (Maximal Marginal Relevance):** Optimizes for both similarity and diversity to avoid redundant results."
+        )
+    )
+
+    # Add temperature slider
+    temperature = st.slider(
+        "Set Temperature:",
+        min_value=0.0,
+        max_value=1.0,
+        value=0.2,
+        step=0.1,
+        key="temperature_slider",
+        help="Controls the randomness of the output. Lower values are more deterministic, higher values are more creative."
+    )
     
     st.markdown(f"**Document Folder:** `{DOCS_DIR}`")
     st.markdown(f"**Database Folder:** `{DB_DIR}`")
@@ -146,10 +181,24 @@ if gemini_api_key:
 
     st.session_state['vectorstore'], changed = sync_vectorstore(st.session_state.get('vectorstore'), gemini_api_key)
     
-    if changed or 'qa_chain' not in st.session_state or st.session_state['qa_chain'] is None:
+    # Check if model or search type has changed
+    model_changed = st.session_state.get('current_model') != model_name
+    search_type_changed = st.session_state.get('current_search_type') != search_type
+    temperature_changed = st.session_state.get('current_temperature') != temperature
+
+    if changed or 'qa_chain' not in st.session_state or st.session_state['qa_chain'] is None or model_changed or search_type_changed or temperature_changed:
         create_qa_chain.clear()
-        st.session_state['qa_chain'] = create_qa_chain(st.session_state['vectorstore'], gemini_api_key)
-        if changed:
+        st.session_state['qa_chain'] = create_qa_chain(
+            st.session_state['vectorstore'], 
+            gemini_api_key,
+            model_name=model_name,
+            search_type=search_type,
+            temperature=temperature
+        )
+        st.session_state['current_model'] = model_name
+        st.session_state['current_search_type'] = search_type
+        st.session_state['current_temperature'] = temperature
+        if changed or model_changed or search_type_changed or temperature_changed:
             st.rerun()
 
 # --- Chat Interface ---

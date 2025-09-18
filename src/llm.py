@@ -63,16 +63,21 @@ def get_full_doc_retriever(retriever):
     return retriever | RunnableLambda(_get_full_documents)
 
 @st.cache_resource
-def create_qa_chain(_vectorstore, api_key):
+def create_qa_chain(_vectorstore, api_key, model_name="gemini-1.5-flash", search_type="mmr", temperature=0.2):
     """Creates a modern conversational retrieval chain."""
     if not _vectorstore or not api_key:
         return None
     
     os.environ["GOOGLE_API_KEY"] = api_key
-    llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
+    llm = ChatGoogleGenerativeAI(model=model_name, temperature=temperature)
+    
+    search_kwargs = {'k': 8}
+    if search_type == "mmr":
+        search_kwargs['fetch_k'] = 20
+
     retriever = _vectorstore.as_retriever(
-        search_type="mmr",
-        search_kwargs={'k': 8, 'fetch_k': 20}
+        search_type=search_type,
+        search_kwargs=search_kwargs
     )
 
     # Contextualize question prompt
