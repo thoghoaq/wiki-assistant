@@ -97,6 +97,7 @@ pdm.py
 
 
 # Environments
+.env
 .venv
 env/
 venv/
@@ -146,3 +147,8 @@ cython_debug/
 chroma_db/
 
 exe/
+
+# Ignore user-uploaded documents and chat sessions
+/documents/
+/chat_sessions/
+/chroma_db/
