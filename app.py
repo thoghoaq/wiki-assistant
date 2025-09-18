@@ -51,7 +51,7 @@ with st.sidebar:
     # Add model selection
     model_name = st.selectbox(
         "Select Gemini Model:",
-        options=["gemini-1.5-flash", "gemini-1.5-pro", "gemini-pro"],
+        options=["gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.5-flash-lite"],
         index=0,
         key="model_name_selector",
         help="Select the Gemini model to use for generating answers."

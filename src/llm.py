@@ -63,7 +63,7 @@ def get_full_doc_retriever(retriever):
     return retriever | RunnableLambda(_get_full_documents)
 
 @st.cache_resource
-def create_qa_chain(_vectorstore, api_key, model_name="gemini-1.5-flash", search_type="mmr", temperature=0.2):
+def create_qa_chain(_vectorstore, api_key, model_name="gemini-2.5-flash", search_type="mmr", temperature=0.2):
     """Creates a modern conversational retrieval chain."""
     if not _vectorstore or not api_key:
         return None
