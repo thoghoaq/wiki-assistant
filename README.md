@@ -66,9 +66,9 @@ Follow these steps to get the application running on your local machine.
     -   You'll know it's active when you see `(venv)` at the beginning of your terminal prompt.
 
 3.  **Install dependencies:**
-    -   With the virtual environment active, install all the required packages with this command:
+    -   With the virtual environment active, install the required packages by running the following command. This might take a few minutes.
         ```bash
-        pip install -r requirements.txt
+        pip install streamlit python-dotenv langchain langchain-community langchain-google-genai chromadb pypdf python-docx openpyxl unstructured markdown
         ```
 
 4.  **Get Your Google API Key:**
