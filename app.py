@@ -1,10 +1,14 @@
 import streamlit as st
 import os
 import shutil
-from dotenv import set_key
+from dotenv import set_key, load_dotenv
 
 # Import from our new modules
 from src.config import DB_DIR, DOCS_DIR, ENV_PATH
+
+# Load environment variables from .env file
+load_dotenv(dotenv_path=ENV_PATH)
+
 from src.chat_history import (
     get_session_list, 
     load_chat_history, 
@@ -21,7 +25,7 @@ from src.vectorstore import (
 from src.llm import create_qa_chain
 
 # --- Streamlit UI ---
-st.set_page_config(page_title="Local Document Chatbot")
+st.set_page_config(page_title="Wiki Assistant", page_icon="📄")
 st.title("📄 Local Document Chatbot with Gemini AI")
 
 # --- Sidebar ---
