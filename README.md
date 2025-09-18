@@ -15,79 +15,81 @@ A personal assistant application built with Streamlit that allows you to chat wi
 - **LangChain**: As the framework for building the language model application.
 - **Google Gemini**: The core language model for understanding and generating responses.
 - **ChromaDB**: For creating and storing vector embeddings of the documents.
-- **PyInstaller**: To bundle the application into a standalone executable.
 
 ## Prerequisites
 
 Before you begin, you need to have the following software installed on your computer.
 
-1.  **Python**: This project requires Python 3.12.
-    -   You can download it from the [official Python website](https://www.python.org/downloads/).
-    -   **Important**: During installation, make sure to check the box that says "Add Python to PATH".
+1. **Python**: This project requires Python 3.12.
+    - You can download it from the [official Python website](https://www.python.org/downloads/).
+    - **Important**: During installation, make sure to check the box that says "Add Python to PATH".
 
-2.  **Git**: You'll need Git to clone the project repository.
-    -   You can download it from the [official Git website](https://git-scm.com/downloads/).
+2. **Git**: You'll need Git to clone the project repository.
+    - You can download it from the [official Git website](https://git-scm.com/downloads/).
 
-## Setup and Installation
+## How to Run (Easy Method for Windows)
 
-Follow these steps to get the application running on your local machine.
+This is the recommended method for Windows users. The script handles everything from creating a virtual environment to installing dependencies.
 
-1.  **Clone the repository:**
-    -   Open a terminal (like PowerShell or Command Prompt on Windows).
-    -   Run the following command to download the project files:
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/thoghoaq/wiki-assistant.git
+    cd wiki-assistant
+    ```
+
+2. **Run the Batch Script:**
+    - Double-click the `wiki-assistant.bat` file.
+    - The first time you run it, a command window will open and automatically:
+        - Create a Python virtual environment (`.venv`).
+        - Install all the required packages from `requirements.txt`.
+        - Start the Streamlit application.
+    - Subsequent runs will be much faster as they will just install any updated packages and start the app.
+
+3. **Add Documents:**
+    - Place any documents (`.pdf`, `.txt`, `.docx`, etc.) you want to chat with inside the `documents` folder.
+
+4. **Enter API Key:**
+    - When the application opens in your browser, paste your Google Gemini API key into the "Gemini API Key" field in the sidebar.
+
+## Manual Installation (for Developers or Non-Windows Users)
+
+Follow these steps if you prefer to set up the environment manually.
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/thoghoaq/wiki-assistant.git
+    cd wiki-assistant
+    ```
+
+2. **Create and activate a virtual environment:**
+    - Create the environment:
+
         ```bash
-        git clone https://github.com/thoghoaq/wiki-assistant.git
+        python -m venv .venv
         ```
-    -   Navigate into the project directory:
+
+    - Activate it:
+        - **Windows (PowerShell):** `.\.venv\Scripts\Activate.ps1`
+        - **Linux / macOS:** `source .venv/bin/activate`
+
+3. **Install dependencies:**
+    - With the virtual environment active, install the required packages from the `requirements.txt` file:
+
         ```bash
-        cd wiki-assistant
+        pip install -r requirements.txt
         ```
 
-2.  **Create and activate a virtual environment:**
-    -   A virtual environment is a private space for the project's dependencies.
-    -   Run this command to create it:
+4. **Get Your Google API Key:**
+    - Go to the [Google AI Studio](https://aistudio.google.com/app/apikey) to create your key.
+
+5. **Run the application:**
+    - Make sure your documents are in the `documents` folder.
+    - Run the Streamlit app from your active terminal:
+
         ```bash
-        python -m venv venv
-        ```
-    -   Activate the environment. The command depends on your operating system and shell:
-        -   **Windows (Command Prompt):**
-            ```cmd
-            venv\Scripts\activate
-            ```
-        -   **Windows (PowerShell):**
-            ```powershell
-            .\venv\Scripts\Activate.ps1
-            ```
-            *Note: If you get an error running this script, you may need to change your execution policy by running `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process` in PowerShell as an administrator.*
-        -   **Linux / macOS (bash/zsh):**
-            ```bash
-            source venv/bin/activate
-            ```
-    -   You'll know it's active when you see `(venv)` at the beginning of your terminal prompt.
-
-3.  **Install dependencies:**
-    -   With the virtual environment active, install the required packages by running the following command. This might take a few minutes.
-        ```bash
-        pip install streamlit python-dotenv langchain langchain-community langchain-google-genai chromadb pypdf python-docx openpyxl unstructured markdown
+        streamlit run app.py
         ```
 
-4.  **Get Your Google API Key:**
-    -   This application uses Google's Gemini model, which requires an API key.
-    -   Go to the [Google AI Studio](https://aistudio.google.com/app/apikey) to create your key.
-    -   Click on "Create API key" and copy the generated key.
-
-5.  **Create the environment file: (optional - be autogenerated)**
-    -   In the project's root directory, create a new file named `.env`.
-    -   Open this file and add your Google API key in the following format:
-      ```
-      GOOGLE_API_KEY=YOUR_API_KEY_HERE
-      ```
-    -   Replace `YOUR_API_KEY_HERE` with the key you copied.
-
-6.  **Run the application:**
-    -   Make sure you have your PDF files inside the `documents` directory.
-    -   Run the Streamlit app from the terminal:
-      ```bash
-      streamlit run app.py
-      ```
-    -   The application should open in a new tab in your web browser.
+    - The application will open in your browser. Enter your API key in the sidebar to begin.
