@@ -130,6 +130,18 @@ def save_chat_history(session_id, history, display_name=None):
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump({"display_name": display_name, "messages": history}, f, indent=4)
 
+def delete_chat_session(session_id):
+    """Deletes the JSON file for a given chat session."""
+    file_path = os.path.join(CHAT_SESSIONS_DIR, f"{session_id}.json")
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+            return True
+        except Exception as e:
+            st.error(f"Error deleting session file: {e}")
+            return False
+    return False
+
 def generate_session_id():
     """Generates a unique session ID."""
     return str(uuid.uuid4())
@@ -429,6 +441,14 @@ with st.sidebar:
         )
         
         selected_session_id = session_mapping[selected_display_name]
+
+        # Add a delete button for the selected conversation
+        if st.button("🗑️ Delete Conversation", key="delete_chat"):
+            delete_chat_session(selected_session_id)
+            # Invalidate session_id to force reload of the next available session
+            st.session_state.pop("session_id", None)
+            st.session_state.pop("messages", None)
+            st.rerun()
 
         # If user selects a different session, load it
         if selected_session_id != st.session_state.get("session_id"):
