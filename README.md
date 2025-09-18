@@ -22,7 +22,7 @@ A personal assistant application built with Streamlit that allows you to chat wi
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/thoghoaq/wiki-assistant.git
     cd wiki-assistant
     ```
 
