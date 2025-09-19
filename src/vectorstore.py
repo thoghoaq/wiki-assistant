@@ -55,14 +55,35 @@ def sync_vectorstore(vectorstore, api_key):
                 disk_docs_names.add(file)
 
     docs_to_add_names = disk_docs_names - indexed_doc_names
+    docs_to_remove_names = indexed_doc_names - disk_docs_names
     
     print("--- DEBUG ---")
     print(f"Docs on disk ({len(disk_docs_names)}): {disk_docs_names}")
     print(f"Indexed docs ({len(indexed_doc_names)}): {indexed_doc_names}")
     print(f"Docs to add ({len(docs_to_add_names)}): {docs_to_add_names}")
+    print(f"Docs to remove ({len(docs_to_remove_names)}): {docs_to_remove_names}")
     print("--- END DEBUG ---")
 
     changed = False
+
+    # Remove documents from the DB that are no longer on disk
+    if docs_to_remove_names:
+        st.info(f"Found {len(docs_to_remove_names)} document(s) to remove...")
+        ids_to_delete = []
+        all_docs = vectorstore.get(include=["metadatas"])
+        if all_docs and all_docs.get('ids'):
+            for i, meta in enumerate(all_docs['metadatas']):
+                source = meta.get('source')
+                if source:
+                    normalized_source = os.path.basename(os.path.normpath(source))
+                    if normalized_source in docs_to_remove_names:
+                        ids_to_delete.append(all_docs['ids'][i])
+        
+        if ids_to_delete:
+            vectorstore._collection.delete(ids=ids_to_delete)
+            vectorstore.persist()
+            st.success(f"Removed {len(docs_to_remove_names)} obsolete document(s) from the database.")
+            changed = True
 
     # Add new documents that are on disk but not in the DB
     if docs_to_add_names:
