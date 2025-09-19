@@ -87,8 +87,8 @@ with st.sidebar:
     st.markdown(f"**Document Folder:** `{DOCS_DIR}`")
     st.markdown(f"**Database Folder:** `{DB_DIR}`")
 
-    if st.button("🔄 Refresh Database", help="Deletes the current database and re-indexes all documents from the 'documents' folder."):
-        st.session_state['force_resync'] = True
+    if st.button("🔄 Sync Database", help="Checks for new documents in the 'documents' folder and adds them to the database."):
+        st.session_state['force_sync'] = True
         st.rerun()
 
     st.header("Chat Sessions")
@@ -159,19 +159,12 @@ if "session_id" not in st.session_state:
         st.session_state.messages = []
         save_chat_history(st.session_state.session_id, [], display_name="New Chat")
 
-# Handle forced re-sync first
-if st.session_state.get('force_resync', False):
-    st.session_state['vectorstore'] = None
+# Handle forced sync
+if st.session_state.get('force_sync', False):
+    # By clearing the cache, we force a reload from disk on the next run
     load_vectorstore.clear()
-    
-    if os.path.exists(DB_DIR):
-        try:
-            shutil.rmtree(DB_DIR)
-            st.success(f"Deleted existing database in '{DB_DIR}'.")
-        except Exception as e:
-            st.error(f"Error deleting database: {e}")
-
-    st.session_state['force_resync'] = False
+    st.session_state['force_sync'] = False
+    # No need to set vectorstore to None, we want to reload it
     st.rerun()
 
 # Load vectorstore from disk if not in session state

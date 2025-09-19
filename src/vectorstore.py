@@ -34,7 +34,6 @@ def sync_vectorstore(vectorstore, api_key):
     """
     Synchronizes the vectorstore with the documents folder.
     - Adds new documents not yet in the DB.
-    - Removes documents from the DB that are no longer in the folder.
     Returns the updated vectorstore and a boolean indicating if changes were made.
     """
     if not api_key:
@@ -44,8 +43,7 @@ def sync_vectorstore(vectorstore, api_key):
     os.environ["GOOGLE_API_KEY"] = api_key
     embeddings = GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
     
-    indexed_docs_paths = get_indexed_documents(vectorstore)
-    indexed_doc_names = {os.path.basename(p) for p in indexed_docs_paths}
+    indexed_doc_names = set(get_indexed_documents(vectorstore))
     
     disk_docs_names = set()
     if not os.path.exists(DOCS_DIR):
@@ -57,23 +55,14 @@ def sync_vectorstore(vectorstore, api_key):
                 disk_docs_names.add(file)
 
     docs_to_add_names = disk_docs_names - indexed_doc_names
-    docs_to_remove_paths = [p for p in indexed_docs_paths if os.path.basename(p) not in disk_docs_names]
     
-    changed = False
+    print("--- DEBUG ---")
+    print(f"Docs on disk ({len(disk_docs_names)}): {disk_docs_names}")
+    print(f"Indexed docs ({len(indexed_doc_names)}): {indexed_doc_names}")
+    print(f"Docs to add ({len(docs_to_add_names)}): {docs_to_add_names}")
+    print("--- END DEBUG ---")
 
-    # Remove documents that are no longer on disk
-    if docs_to_remove_paths:
-        st.info(f"Found {len(docs_to_remove_paths)} document(s) to remove...")
-        ids_to_delete = []
-        for doc_path in docs_to_remove_paths:
-            docs_found = vectorstore.get(where={"source": doc_path})
-            ids_to_delete.extend(docs_found.get('ids', []))
-        
-        if ids_to_delete:
-            vectorstore.delete(ids=ids_to_delete)
-            vectorstore.persist()
-            st.success("Removed stale documents from the database.")
-            changed = True
+    changed = False
 
     # Add new documents that are on disk but not in the DB
     if docs_to_add_names:
@@ -130,7 +119,15 @@ def get_indexed_documents(vectorstore):
         all_docs = vectorstore.get(include=["metadatas"])
         if not all_docs or not all_docs.get('metadatas'):
             return []
-        sources = set(meta.get('source') for meta in all_docs['metadatas'] if meta.get('source'))
+        
+        sources = set()
+        for meta in all_docs['metadatas']:
+            source = meta.get('source')
+            if source:
+                # Normalize the path and get the base name
+                normalized_source = os.path.basename(os.path.normpath(source))
+                sources.add(normalized_source)
+        
         return sorted(list(sources))
     except Exception:
         return []
